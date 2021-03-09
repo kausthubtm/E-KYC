@@ -1,4 +1,5 @@
 'use strict';
+var sha256 = require('js-sha256');
 
 const { Contract } = require('fabric-contract-api');
 
@@ -6,46 +7,6 @@ class ChainCode extends Contract {
 
     async InitLedger(ctx) {
         const customers = [
-            {
-                ID: '1',
-                Name: 'Kausthub',
-                Gender: 'M',
-                Pan: 123,
-                Aadar_no: 2323,
-                Bank: 'abc',
-            },
-            {
-                ID: '2',
-                Name: 'Devika',
-                Gender: 'F',
-                Pan: 223,
-                Aadar_no: 4643,
-                Bank: 'xyz',
-            },
-            {
-                ID: '3',
-                Name: 'Nithin',
-                Gender: 'M',
-                Pan: 323,
-                Aadar_no: 7823,
-                Bank: 'abc'
-            },
-            {
-                ID: '4',
-                Name: 'Deeksha',
-                Gender: 'F',
-                Pan: 423,
-                Aadar_no: 2532,
-                Bank: 'abc'
-            },
-            {
-                ID: '5',
-                Name: 'David',
-                Gender: 'M',
-                Pan: 523,
-                Aadar_no: 9832,
-                Bank: 'xyz'
-            },
         ];
 
         for (const customer of customers) {
@@ -63,32 +24,64 @@ class ChainCode extends Contract {
         return customerJSON.toString();
     }
 
-    async CreateCustomer(ctx, id, name, gender, pan, aadarNo, bank) {
+    async CreateCustomer(ctx, id, name, gender, pan, aadarNo) {
+
+        var hash1 = sha256.hmac.create(id);
+        hash1.update(name);
+        var hexhashname = hash1.hex(id);
+
+        var hash2 = sha256.hmac.create(id);
+        hash2.update(gender);
+        var hexhashgender = hash2.hex();
+
+        var hash3 = sha256.hmac.create(id);
+        hash3.update(pan);
+        var hexhashpan = hash3.hex();
+
+        var hash4 = sha256.hmac.create(id);
+        hash4.update(aadarNo);
+        var hexhashaadar = hash4.hex();
+
         const customer = {
-            ID: id,
-            Name: name,
-            Gender: gender,
-            Pan: pan,
-            Aadar_no: aadarNo,
-            Bank: bank,
+            ID : id,
+            Name : hexhashname,
+            Gender : hexhashgender,
+            Pan : hexhashpan,
+            Aadhar : hexhashaadar
         };
+
         ctx.stub.putState(id, Buffer.from(JSON.stringify(customer)));
         return JSON.stringify(customer);
     }
     
-    async UpdateCustomer(ctx, id, name, gender, pan, aadarNo, bank) {
+    async UpdateCustomer(ctx, id, name, gender, pan, aadarNo) {
         const exists = await this.CustomerExists(ctx, id);
         if (!exists) {
             throw new Error(`The customer with ID = ${id} does not exist`);
         }
+        
+        var hash1 = sha256.hmac.create(id);
+        hash1.update(name);
+        var hexhashname = hash1.hex();
+
+        var hash2 = sha256.hmac.create(id);
+        hash2.update(gender);
+        var hexhashgender = hash2.hex();
+
+        var hash3 = sha256.hmac.create(id);
+        hash3.update(pan);
+        var hexhashpan = hash3.hex();
+
+        var hash4 = sha256.hmac.create(id);
+        hash4.update(aadarNo);
+        var hexhashaadar = hash4.hex();
 
         const updatedCustomer = {
-            ID: id,
-            Name: name,
-            Gender: gender,
-            Pan: pan,
-            Aadar_no: aadarNo,
-            Bank: bank,
+            ID : id,
+            Name : hexhashname,
+            Gender : hexhashgender,
+            Pan : hexhashpan,
+            Aadhar : hexhashaadar
         };
         return ctx.stub.putState(id, Buffer.from(JSON.stringify(updatedCustomer)));
     }

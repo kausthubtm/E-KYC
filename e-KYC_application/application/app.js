@@ -108,7 +108,7 @@ async function main() {
 				// To create a new client
 				if(type == '3') {
 					prompt.start();
-					prompt.get(['id', 'name', 'gender', 'pan_no', 'aadhar_no', 'bank_name'], async function (err, result) {
+					prompt.get(['id', 'name', 'gender', 'pan_no', 'aadhar_no'], async function (err, result) {
 						if (err) { return onErr(err); }
 						console.log('Command-line input received:');
 						console.log('  ID: ' + result.id);
@@ -116,11 +116,10 @@ async function main() {
 						console.log('  Gender: ' + result.gender);
 						console.log('  Pan no: ' + result.pan_no);
 						console.log('  Aadhar no: ' + result.aadhar_no);
-						console.log('  Bank name: ' + result.bank_name);
-						if(result.id && result.name || result.gender || result.pan_no || result.aadhar_no || result.bank_name) {
+						if(result.id && result.name || result.gender || result.pan_no || result.aadhar_no ) {
 							try {
-								console.log('\n--> Submit Transaction: CreateAsset, creates new client with ID, name, gender, pan no, aadhar no and bank name as arguments');
-								let ans = await contract.submitTransaction('CreateCustomer', result.id, result.name, result.gender, result.pan_no, result.aadhar_no, result.bank_name);
+								console.log('\n--> Submit Transaction: CreateAsset, creates new client');
+								let ans = await contract.submitTransaction('CreateCustomer', result.id, result.name, result.gender, result.pan_no, result.aadhar_no);
 								console.log(`*** Result committed: ${prettyJSONString(ans.toString())}`);
 							} catch (error) {
 								console.error(`error : ${error}`);
@@ -136,7 +135,7 @@ async function main() {
 				// To update a client
 				if(type == '4') {
 					prompt.start();
-					prompt.get(['id', 'name', 'gender', 'pan_no', 'aadhar_no', 'bank_name'], async function (err, result) {
+					prompt.get(['id', 'name', 'gender', 'pan_no', 'aadhar_no'], async function (err, result) {
 						if (err) { return onErr(err); }
 						console.log('Command-line input received:');
 						console.log('  ID: ' + result.id);
@@ -144,11 +143,10 @@ async function main() {
 						console.log('  Gender: ' + result.gender);
 						console.log('  Pan no: ' + result.pan_no);
 						console.log('  Aadhar no: ' + result.aadhar_no);
-						console.log('  Bank name: ' + result.bank_name);
-						if(result.id && result.name || result.gender || result.pan_no || result.aadhar_no || result.bank_name) {
+						if(result.id && result.name || result.gender || result.pan_no || result.aadhar_no) {
 							try {
 								console.log('\n--> Submit Transaction: UpdateAsset, updates the info of an already existing client');
-								await contract.submitTransaction('UpdateCustomer', result.id, result.name, result.gender, result.pan_no, result.aadhar_no, result.bank_name);
+								await contract.submitTransaction('UpdateCustomer', result.id, result.name, result.gender, result.pan_no, result.aadhar_no);
 								console.log('*** Result: committed');
 							} catch (error) {
 								console.error(`error : ${error}`);
